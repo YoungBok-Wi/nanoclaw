@@ -1,23 +1,23 @@
-# Contributing
+# 기여하기
 
-## Source Code Changes
+## 소스 코드 변경
 
-**Accepted:** Bug fixes, security fixes, simplifications, reducing code.
+**수락됨:** 버그 수정, 보안 수정, 단순화, 코드 줄이기.
 
-**Not accepted:** Features, capabilities, compatibility, enhancements. These should be skills.
+**수락되지 않음:** 기능, 역량, 호환성, 개선 사항. 이것들은 스킬이어야 합니다.
 
-## Skills
+## 스킬
 
-A [skill](https://code.claude.com/docs/en/skills) is a markdown file in `.claude/skills/` that teaches Claude Code how to transform a NanoClaw installation.
+[스킬](https://code.claude.com/docs/en/skills)은 Claude Code에게 NanoClaw 설치를 변환하는 방법을 가르치는 `.claude/skills/`의 마크다운 파일입니다.
 
-A PR that contributes a skill should not modify any source files.
+스킬을 기여하는 PR은 어떤 소스 파일도 수정해서는 안 됩니다.
 
-Your skill should contain the **instructions** Claude follows to add the feature—not pre-built code. See `/convert-to-docker` for a good example.
+스킬에는 Claude가 기능을 추가하기 위해 따르는 **지침**이 포함되어야 합니다—미리 작성된 코드가 아닙니다. 좋은 예시는 `/convert-to-docker`를 참조하세요.
 
-### Why?
+### 왜?
 
-Every user should have clean and minimal code that does exactly what they need. Skills let users selectively add features to their fork without inheriting code for features they don't want.
+모든 사용자는 정확히 필요한 것만 하는 깔끔하고 최소한의 코드를 가져야 합니다. 스킬을 사용하면 사용자가 원하지 않는 기능에 대한 코드를 상속받지 않고 선택적으로 포크에 기능을 추가할 수 있습니다.
 
-### Testing
+### 테스트
 
-Test your skill by running it on a fresh clone before submitting.
+제출하기 전에 새로운 클론에서 스킬을 실행하여 테스트하세요.

@@ -1,119 +1,119 @@
-# NanoClaw Security Model
+# NanoClaw 보안 모델
 
-## Trust Model
+## 신뢰 모델
 
-| Entity | Trust Level | Rationale |
-|--------|-------------|-----------|
-| Main group | Trusted | Private self-chat, admin control |
-| Non-main groups | Untrusted | Other users may be malicious |
-| Container agents | Sandboxed | Isolated execution environment |
-| WhatsApp messages | User input | Potential prompt injection |
+| 엔터티 | 신뢰 수준 | 근거 |
+|--------|----------|------|
+| 메인 그룹 | 신뢰됨 | 개인 자기 채팅, 관리 제어 |
+| 비메인 그룹 | 신뢰되지 않음 | 다른 사용자가 악의적일 수 있음 |
+| 컨테이너 에이전트 | 샌드박스됨 | 격리된 실행 환경 |
+| WhatsApp 메시지 | 사용자 입력 | 잠재적 프롬프트 인젝션 |
 
-## Security Boundaries
+## 보안 경계
 
-### 1. Container Isolation (Primary Boundary)
+### 1. 컨테이너 격리 (주요 경계)
 
-Agents execute in Apple Container (lightweight Linux VMs), providing:
-- **Process isolation** - Container processes cannot affect the host
-- **Filesystem isolation** - Only explicitly mounted directories are visible
-- **Non-root execution** - Runs as unprivileged `node` user (uid 1000)
-- **Ephemeral containers** - Fresh environment per invocation (`--rm`)
+에이전트는 Apple Container(경량 Linux VM)에서 실행되어 다음을 제공합니다:
+- **프로세스 격리** - 컨테이너 프로세스는 호스트에 영향을 줄 수 없음
+- **파일 시스템 격리** - 명시적으로 마운트된 디렉토리만 볼 수 있음
+- **비루트 실행** - 권한 없는 `node` 사용자(uid 1000)로 실행
+- **임시 컨테이너** - 호출당 새로운 환경 (`--rm`)
 
-This is the primary security boundary. Rather than relying on application-level permission checks, the attack surface is limited by what's mounted.
+이것이 주요 보안 경계입니다. 애플리케이션 수준 권한 검사에 의존하는 대신, 공격 표면이 마운트된 것으로 제한됩니다.
 
-### 2. Mount Security
+### 2. 마운트 보안
 
-**External Allowlist** - Mount permissions stored at `~/.config/nanoclaw/mount-allowlist.json`, which is:
-- Outside project root
-- Never mounted into containers
-- Cannot be modified by agents
+**외부 허용 목록** - 마운트 권한은 `~/.config/nanoclaw/mount-allowlist.json`에 저장되며, 이는:
+- 프로젝트 루트 외부에 있음
+- 절대 컨테이너에 마운트되지 않음
+- 에이전트가 수정할 수 없음
 
-**Default Blocked Patterns:**
+**기본 차단 패턴:**
 ```
 .ssh, .gnupg, .aws, .azure, .gcloud, .kube, .docker,
 credentials, .env, .netrc, .npmrc, id_rsa, id_ed25519,
 private_key, .secret
 ```
 
-**Protections:**
-- Symlink resolution before validation (prevents traversal attacks)
-- Container path validation (rejects `..` and absolute paths)
-- `nonMainReadOnly` option forces read-only for non-main groups
+**보호:**
+- 검증 전 심볼릭 링크 해석 (traversal 공격 방지)
+- 컨테이너 경로 검증 (`..` 및 절대 경로 거부)
+- `nonMainReadOnly` 옵션은 비메인 그룹에 읽기 전용 강제
 
-### 3. Session Isolation
+### 3. 세션 격리
 
-Each group has isolated Claude sessions at `data/sessions/{group}/.claude/`:
-- Groups cannot see other groups' conversation history
-- Session data includes full message history and file contents read
-- Prevents cross-group information disclosure
+각 그룹은 `data/sessions/{group}/.claude/`에 격리된 Claude 세션을 가짐:
+- 그룹은 다른 그룹의 대화 기록을 볼 수 없음
+- 세션 데이터에는 전체 메시지 기록과 읽은 파일 내용이 포함됨
+- 그룹 간 정보 공개 방지
 
-### 4. IPC Authorization
+### 4. IPC 권한 부여
 
-Messages and task operations are verified against group identity:
+메시지 및 작업 작업은 그룹 신원에 대해 확인됩니다:
 
-| Operation | Main Group | Non-Main Group |
-|-----------|------------|----------------|
-| Send message to own chat | ✓ | ✓ |
-| Send message to other chats | ✓ | ✗ |
-| Schedule task for self | ✓ | ✓ |
-| Schedule task for others | ✓ | ✗ |
-| View all tasks | ✓ | Own only |
-| Manage other groups | ✓ | ✗ |
+| 작업 | 메인 그룹 | 비메인 그룹 |
+|------|----------|------------|
+| 자신의 채팅에 메시지 보내기 | ✓ | ✓ |
+| 다른 채팅에 메시지 보내기 | ✓ | ✗ |
+| 자신을 위한 작업 예약 | ✓ | ✓ |
+| 다른 사람을 위한 작업 예약 | ✓ | ✗ |
+| 모든 작업 보기 | ✓ | 자신만 |
+| 다른 그룹 관리 | ✓ | ✗ |
 
-### 5. Credential Handling
+### 5. 자격 증명 처리
 
-**Mounted Credentials:**
-- Claude auth tokens (filtered from `.env`, read-only)
+**마운트된 자격 증명:**
+- Claude 인증 토큰 (`.env`에서 필터링됨, 읽기 전용)
 
-**NOT Mounted:**
-- WhatsApp session (`store/auth/`) - host only
-- Mount allowlist - external, never mounted
-- Any credentials matching blocked patterns
+**마운트되지 않은 것:**
+- WhatsApp 세션 (`store/auth/`) - 호스트만
+- 마운트 허용 목록 - 외부, 절대 마운트되지 않음
+- 차단 패턴과 일치하는 모든 자격 증명
 
-**Credential Filtering:**
-Only these environment variables are exposed to containers:
+**자격 증명 필터링:**
+이 환경 변수만 컨테이너에 노출됩니다:
 ```typescript
 const allowedVars = ['CLAUDE_CODE_OAUTH_TOKEN', 'ANTHROPIC_API_KEY'];
 ```
 
-> **Note:** Anthropic credentials are mounted so that Claude Code can authenticate when the agent runs. However, this means the agent itself can discover these credentials via Bash or file operations. Ideally, Claude Code would authenticate without exposing credentials to the agent's execution environment, but I couldn't figure this out. **PRs welcome** if you have ideas for credential isolation.
+> **참고:** Anthropic 자격 증명은 에이전트가 실행될 때 Claude Code가 인증할 수 있도록 마운트됩니다. 그러나 이는 에이전트 자체가 Bash 또는 파일 작업을 통해 이러한 자격 증명을 발견할 수 있음을 의미합니다. 이상적으로 Claude Code는 에이전트의 실행 환경에 자격 증명을 노출하지 않고 인증해야 하지만, 이 방법을 알아내지 못했습니다. **자격 증명 격리에 대한 아이디어가 있으면 PR을 환영합니다.**
 
-## Privilege Comparison
+## 권한 비교
 
-| Capability | Main Group | Non-Main Group |
-|------------|------------|----------------|
-| Project root access | `/workspace/project` (rw) | None |
-| Group folder | `/workspace/group` (rw) | `/workspace/group` (rw) |
-| Global memory | Implicit via project | `/workspace/global` (ro) |
-| Additional mounts | Configurable | Read-only unless allowed |
-| Network access | Unrestricted | Unrestricted |
-| MCP tools | All | All |
+| 기능 | 메인 그룹 | 비메인 그룹 |
+|------|----------|------------|
+| 프로젝트 루트 접근 | `/workspace/project` (rw) | 없음 |
+| 그룹 폴더 | `/workspace/group` (rw) | `/workspace/group` (rw) |
+| 전역 메모리 | 프로젝트를 통해 암시적 | `/workspace/global` (ro) |
+| 추가 마운트 | 구성 가능 | 허용되지 않는 한 읽기 전용 |
+| 네트워크 접근 | 무제한 | 무제한 |
+| MCP 도구 | 모두 | 모두 |
 
-## Security Architecture Diagram
+## 보안 아키텍처 다이어그램
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                        UNTRUSTED ZONE                             │
-│  WhatsApp Messages (potentially malicious)                        │
+│                        신뢰되지 않는 영역                           │
+│  WhatsApp 메시지 (잠재적으로 악의적)                                 │
 └────────────────────────────────┬─────────────────────────────────┘
                                  │
-                                 ▼ Trigger check, input escaping
+                                 ▼ 트리거 확인, 입력 이스케이프
 ┌──────────────────────────────────────────────────────────────────┐
-│                     HOST PROCESS (TRUSTED)                        │
-│  • Message routing                                                │
-│  • IPC authorization                                              │
-│  • Mount validation (external allowlist)                          │
-│  • Container lifecycle                                            │
-│  • Credential filtering                                           │
+│                     호스트 프로세스 (신뢰됨)                         │
+│  • 메시지 라우팅                                                    │
+│  • IPC 권한 부여                                                    │
+│  • 마운트 검증 (외부 허용 목록)                                       │
+│  • 컨테이너 생명주기                                                 │
+│  • 자격 증명 필터링                                                  │
 └────────────────────────────────┬─────────────────────────────────┘
                                  │
-                                 ▼ Explicit mounts only
+                                 ▼ 명시적 마운트만
 ┌──────────────────────────────────────────────────────────────────┐
-│                CONTAINER (ISOLATED/SANDBOXED)                     │
-│  • Agent execution                                                │
-│  • Bash commands (sandboxed)                                      │
-│  • File operations (limited to mounts)                            │
-│  • Network access (unrestricted)                                  │
-│  • Cannot modify security config                                  │
+│                컨테이너 (격리됨/샌드박스됨)                           │
+│  • 에이전트 실행                                                    │
+│  • Bash 명령 (샌드박스됨)                                           │
+│  • 파일 작업 (마운트로 제한)                                         │
+│  • 네트워크 접근 (무제한)                                            │
+│  • 보안 설정 수정 불가                                               │
 └──────────────────────────────────────────────────────────────────┘
 ```
