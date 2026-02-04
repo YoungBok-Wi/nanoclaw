@@ -4,18 +4,18 @@
 
 ## 빠른 컨텍스트
 
-WhatsApp에 연결하고 메시지를 Apple Container(Linux VM)에서 실행되는 Claude Agent SDK로 라우팅하는 단일 Node.js 프로세스입니다. 각 그룹은 격리된 파일 시스템과 메모리를 가집니다.
+Discord에 연결하고 메시지를 Apple Container(Linux VM)에서 실행되는 Claude Agent SDK로 라우팅하는 단일 Node.js 프로세스입니다. 각 채널은 격리된 파일 시스템과 메모리를 가집니다.
 
 ## 주요 파일
 
 | 파일 | 역할 |
 |------|------|
-| `src/index.ts` | 메인 앱: WhatsApp 연결, 메시지 라우팅, IPC |
+| `src/index.ts` | 메인 앱: Discord 연결, 메시지 라우팅, IPC |
 | `src/config.ts` | 트리거 패턴, 경로, 인터벌 설정 |
 | `src/container-runner.ts` | 마운트와 함께 에이전트 컨테이너 생성 |
 | `src/task-scheduler.ts` | 예약 작업 실행 |
 | `src/db.ts` | SQLite 데이터베이스 작업 |
-| `groups/{name}/CLAUDE.md` | 그룹별 메모리 (격리됨) |
+| `groups/{name}/CLAUDE.md` | 채널별 메모리 (격리됨) |
 
 ## 스킬
 

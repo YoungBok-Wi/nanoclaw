@@ -22,8 +22,8 @@
 | **컨테이너 (Container)** | 프로그램을 격리된 "상자" 안에서 실행하는 기술입니다. 컨테이너 안의 프로그램은 컴퓨터의 다른 부분에 접근할 수 없어서 안전합니다. |
 | **Docker** | 컨테이너를 만들고 실행하는 가장 유명한 프로그램입니다. Windows, Mac, Linux 모두에서 사용 가능합니다. |
 | **Apple Container** | Apple이 만든 Mac 전용 컨테이너 시스템입니다. Docker보다 Mac에서 더 빠릅니다. |
-| **WhatsApp** | 전 세계적으로 많이 쓰이는 메신저 앱입니다. 이 프로젝트는 WhatsApp으로 AI에게 말을 걸 수 있게 해줍니다. |
-| **baileys** | WhatsApp에 프로그램으로 접속할 수 있게 해주는 라이브러리입니다. 공식 API가 아닌 비공식 방법입니다. |
+| **Discord** | 게이머와 커뮤니티에서 많이 쓰이는 메신저 플랫폼입니다. 이 프로젝트는 Discord로 AI에게 말을 걸 수 있게 해줍니다. |
+| **Discord.js** | Discord Bot을 프로그램으로 만들 수 있게 해주는 공식 JavaScript 라이브러리입니다. |
 | **SQLite** | 파일 하나로 동작하는 가벼운 데이터베이스입니다. 별도 서버 설치 없이 사용할 수 있습니다. |
 | **MCP (Model Context Protocol)** | AI가 외부 도구(웹 검색, 파일 읽기 등)를 사용할 수 있게 해주는 표준 프로토콜입니다. |
 | **launchd** | Mac에서 프로그램을 백그라운드에서 자동 실행하게 해주는 시스템입니다. Windows의 "서비스"와 비슷합니다. |
@@ -81,9 +81,9 @@ claude
 
 ## 지원 기능
 
-- **WhatsApp 입출력** - 휴대폰에서 Claude에게 메시지 보내기
-- **격리된 그룹 컨텍스트** - 각 그룹은 자체 `CLAUDE.md` 메모리, 격리된 파일 시스템을 가지며, 해당 파일 시스템만 마운트된 자체 컨테이너 샌드박스에서 실행
-- **메인 채널** - 관리 제어를 위한 개인 채널(자기 자신에게 보내는 채팅); 다른 모든 그룹은 완전히 격리됨
+- **Discord 입출력** - Discord 서버나 DM으로 Claude에게 메시지 보내기
+- **격리된 채널 컨텍스트** - 각 Discord 채널은 자체 `CLAUDE.md` 메모리, 격리된 파일 시스템을 가지며, 해당 파일 시스템만 마운트된 자체 컨테이너 샌드박스에서 실행
+- **메인 채널** - 관리 제어를 위한 개인 채널(DM 또는 특정 채널); 다른 모든 채널은 완전히 격리됨
 - **예약 작업** - Claude를 실행하고 메시지를 보낼 수 있는 반복 작업
 - **웹 접근** - 검색 및 콘텐츠 가져오기
 - **컨테이너 격리** - Apple Container(macOS) 또는 Docker(macOS/Linux)에서 샌드박스된 에이전트
@@ -101,11 +101,11 @@ claude
 @Andy 매주 월요일 오전 8시에 Hacker News와 TechCrunch에서 AI 개발 뉴스를 모아서 브리핑해줘
 ```
 
-메인 채널(자기 자신에게 보내는 채팅)에서 그룹과 작업을 관리할 수 있습니다:
+메인 채널(DM 또는 지정된 관리 채널)에서 채널과 작업을 관리할 수 있습니다:
 ```
-@Andy 모든 그룹의 예약 작업 목록 보여줘
+@Andy 모든 채널의 예약 작업 목록 보여줘
 @Andy 월요일 브리핑 작업 일시 중지해줘
-@Andy Family Chat 그룹에 참여해줘
+@Andy #general 채널에 참여해줘
 ```
 
 ---
@@ -138,9 +138,9 @@ Telegram 지원을 추가하고 싶다면, WhatsApp 옆에 Telegram을 추가하
 우리가 보고 싶은 스킬들:
 
 **커뮤니케이션 채널**
-- `/add-telegram` - Telegram을 채널로 추가. WhatsApp을 대체하거나 추가 채널로 사용하는 옵션 제공. 제어 채널(작업을 트리거할 수 있는)로 추가하거나 다른 곳에서 트리거된 작업에서만 사용되는 채널로 추가 가능
+- `/add-telegram` - Telegram을 채널로 추가. Discord를 대체하거나 추가 채널로 사용하는 옵션 제공. 제어 채널(작업을 트리거할 수 있는)로 추가하거나 다른 곳에서 트리거된 작업에서만 사용되는 채널로 추가 가능
 - `/add-slack` - Slack 추가
-- `/add-discord` - Discord 추가
+- `/add-whatsapp` - WhatsApp 추가 (baileys 라이브러리 사용)
 
 **플랫폼 지원**
 - `/setup-windows` - WSL2 + Docker를 통한 Windows 지원
@@ -162,37 +162,37 @@ Telegram 지원을 추가하고 싶다면, WhatsApp 옆에 Telegram을 추가하
 ## 아키텍처
 
 ```
-WhatsApp (baileys) --> SQLite --> 폴링 루프 --> 컨테이너 (Claude Agent SDK) --> 응답
+Discord Bot (discord.js) --> SQLite --> 폴링 루프 --> 컨테이너 (Claude Agent SDK) --> 응답
 ```
 
 단일 Node.js 프로세스. 에이전트는 마운트된 디렉토리와 함께 격리된 Linux 컨테이너에서 실행됩니다. 파일 시스템을 통한 IPC. 데몬 없음, 큐 없음, 복잡성 없음.
 
 ### 작동 방식 (간단 설명)
 
-1. **WhatsApp 연결**: baileys 라이브러리가 WhatsApp Web에 연결합니다
+1. **Discord 연결**: discord.js 라이브러리가 Discord API에 연결합니다
 2. **메시지 저장**: 받은 메시지가 SQLite 데이터베이스에 저장됩니다
 3. **메시지 확인**: 2초마다 새 메시지가 있는지 확인합니다
 4. **트리거 감지**: `@Andy`로 시작하는 메시지를 찾습니다
 5. **컨테이너 실행**: 격리된 컨테이너에서 Claude Agent SDK를 실행합니다
-6. **응답 전송**: Claude의 응답을 WhatsApp으로 보냅니다
+6. **응답 전송**: Claude의 응답을 Discord로 보냅니다
 
 ### 주요 파일
 
 | 파일 | 역할 |
 |------|------|
-| `src/index.ts` | 메인 앱: WhatsApp 연결, 라우팅, IPC |
+| `src/index.ts` | 메인 앱: Discord 연결, 라우팅, IPC |
 | `src/container-runner.ts` | 에이전트 컨테이너 생성 |
 | `src/task-scheduler.ts` | 예약 작업 실행 |
 | `src/db.ts` | SQLite 데이터베이스 작업 |
-| `groups/*/CLAUDE.md` | 그룹별 메모리 |
+| `groups/*/CLAUDE.md` | 채널별 메모리 |
 
 ---
 
 ## FAQ
 
-**왜 WhatsApp이고 Telegram/Signal 등은 아닌가요?**
+**왜 Discord이고 Telegram/WhatsApp 등은 아닌가요?**
 
-제가 WhatsApp을 사용하기 때문입니다. 포크해서 스킬을 실행해 바꾸세요. 그게 전체 포인트입니다.
+이 포크는 Discord를 사용합니다. 다른 플랫폼을 원하면 포크해서 스킬을 실행해 바꾸세요. 그게 전체 포인트입니다.
 
 **왜 Docker 대신 Apple Container인가요?**
 

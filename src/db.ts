@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import fs from 'fs';
 import path from 'path';
 
-import { proto } from '@whiskeysockets/baileys';
+import { Message } from 'discord.js';
 
 import { STORE_DIR } from './config.js';
 import { NewMessage, ScheduledTask, TaskRunLog } from './types.js';
@@ -168,33 +168,24 @@ export function setLastGroupSync(): void {
 
 /**
  * Store a message with full content.
- * Only call this for registered groups where message history is needed.
+ * Only call this for registered channels where message history is needed.
  */
 export function storeMessage(
-  msg: proto.IWebMessageInfo,
-  chatJid: string,
+  msg: Message,
+  channelId: string,
   isFromMe: boolean,
-  pushName?: string,
 ): void {
-  if (!msg.key) return;
-
-  const content =
-    msg.message?.conversation ||
-    msg.message?.extendedTextMessage?.text ||
-    msg.message?.imageMessage?.caption ||
-    msg.message?.videoMessage?.caption ||
-    '';
-
-  const timestamp = new Date(Number(msg.messageTimestamp) * 1000).toISOString();
-  const sender = msg.key.participant || msg.key.remoteJid || '';
-  const senderName = pushName || sender.split('@')[0];
-  const msgId = msg.key.id || '';
+  const content = msg.content;
+  const timestamp = new Date(msg.createdTimestamp).toISOString();
+  const sender = msg.author.id;
+  const senderName = msg.author.username || msg.author.tag || sender;
+  const msgId = msg.id;
 
   db.prepare(
     `INSERT OR REPLACE INTO messages (id, chat_jid, sender, sender_name, content, timestamp, is_from_me) VALUES (?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     msgId,
-    chatJid,
+    channelId,
     sender,
     senderName,
     content,
