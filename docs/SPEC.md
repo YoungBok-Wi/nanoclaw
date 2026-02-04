@@ -169,7 +169,7 @@ nanoclaw/
 ```typescript
 import path from 'path';
 
-export const ASSISTANT_NAME = process.env.ASSISTANT_NAME || 'Andy';
+export const ASSISTANT_NAME = process.env.ASSISTANT_NAME || 'Blanc';
 export const POLL_INTERVAL = 2000;
 export const SCHEDULER_POLL_INTERVAL = 60000;
 
@@ -198,7 +198,7 @@ export const TRIGGER_PATTERN = new RegExp(`^@${ASSISTANT_NAME}\\b`, 'i');
   "1234567890@g.us": {
     "name": "Dev Team",
     "folder": "dev-team",
-    "trigger": "@Andy",
+    "trigger": "@Blanc",
     "added_at": "2026-01-31T12:00:00Z",
     "containerConfig": {
       "additionalMounts": [
@@ -357,10 +357,10 @@ NanoClaw는 CLAUDE.md 파일 기반의 계층적 메모리 시스템을 사용�
 
 ### 트리거 단어 매칭
 
-메시지는 트리거 패턴(기본값: `@Andy`)으로 시작해야 합니다:
-- `@Andy 날씨 어때?` → ✅ Claude 트리거됨
-- `@andy 도와줘` → ✅ 트리거됨 (대소문자 구분 없음)
-- `안녕 @Andy` → ❌ 무시됨 (트리거가 시작에 없음)
+메시지는 트리거 패턴(기본값: `@Blanc`)으로 시작해야 합니다:
+- `@Blanc 날씨 어때?` → ✅ Claude 트리거됨
+- `@Blanc 도와줘` → ✅ 트리거됨 (대소문자 구분 없음)
+- `안녕 @Blanc` → ❌ 무시됨 (트리거가 시작에 없음)
 - `뭐해?` → ❌ 무시됨 (트리거 없음)
 
 ### 대화 따라잡기
@@ -370,7 +370,7 @@ NanoClaw는 CLAUDE.md 파일 기반의 계층적 메모리 시스템을 사용�
 ```
 [1월 31일 오후 2:32] 철수: 오늘 저녁 피자 먹을까?
 [1월 31일 오후 2:33] 영희: 좋아
-[1월 31일 오후 2:35] 철수: @Andy 토핑 뭐가 좋아?
+[1월 31일 오후 2:35] 철수: @Blanc 토핑 뭐가 좋아?
 ```
 
 이렇게 하면 에이전트가 모든 메시지에서 언급되지 않아도 대화 컨텍스트를 이해할 수 있습니다.
@@ -383,16 +383,16 @@ NanoClaw는 CLAUDE.md 파일 기반의 계층적 메모리 시스템을 사용�
 
 | 명령어 | 예시 | 효과 |
 |--------|-----|------|
-| `@Assistant [메시지]` | `@Andy 날씨 어때?` | Claude와 대화 |
+| `@Assistant [메시지]` | `@Blanc 날씨 어때?` | Claude와 대화 |
 
 ### 메인 채널에서만 사용 가능한 명령어
 
 | 명령어 | 예시 | 효과 |
 |--------|-----|------|
-| `@Assistant add group "이름"` | `@Andy add group "가족 채팅"` | 새 그룹 등록 |
-| `@Assistant remove group "이름"` | `@Andy remove group "회사 팀"` | 그룹 등록 해제 |
-| `@Assistant list groups` | `@Andy list groups` | 등록된 그룹 표시 |
-| `@Assistant remember [사실]` | `@Andy remember 나는 다크 모드를 선호해` | 전역 메모리에 추가 |
+| `@Assistant add group "이름"` | `@Blanc add group "가족 채팅"` | 새 그룹 등록 |
+| `@Assistant remove group "이름"` | `@Blanc remove group "회사 팀"` | 그룹 등록 해제 |
+| `@Assistant list groups` | `@Blanc list groups` | 등록된 그룹 표시 |
+| `@Assistant remember [사실]` | `@Blanc remember 나는 다크 모드를 선호해` | 전역 메모리에 추가 |
 
 ---
 
@@ -418,7 +418,7 @@ NanoClaw는 그룹 컨텍스트에서 전체 에이전트로 작업을 실행하
 ### 작업 생성
 
 ```
-사용자: @Andy 매주 월요일 오전 9시에 주간 지표를 검토하라고 알려줘
+사용자: @Blanc 매주 월요일 오전 9시에 주간 지표를 검토하라고 알려줘
 
 Claude: [mcp__nanoclaw__schedule_task 호출]
         {
@@ -433,7 +433,7 @@ Claude: 완료! 매주 월요일 오전 9시에 알려드리겠습니다.
 ### 일회성 작업
 
 ```
-사용자: @Andy 오늘 오후 5시에 오늘 이메일 요약을 보내줘
+사용자: @Blanc 오늘 오후 5시에 오늘 이메일 요약을 보내줘
 
 Claude: [mcp__nanoclaw__schedule_task 호출]
         {
@@ -446,14 +446,14 @@ Claude: [mcp__nanoclaw__schedule_task 호출]
 ### 작업 관리
 
 모든 그룹에서:
-- `@Andy 내 예약 작업 목록` - 이 그룹의 작업 보기
-- `@Andy pause task [id]` - 작업 일시 중지
-- `@Andy resume task [id]` - 일시 중지된 작업 재개
-- `@Andy cancel task [id]` - 작업 삭제
+- `@Blanc 내 예약 작업 목록` - 이 그룹의 작업 보기
+- `@Blanc pause task [id]` - 작업 일시 중지
+- `@Blanc resume task [id]` - 일시 중지된 작업 재개
+- `@Blanc cancel task [id]` - 작업 삭제
 
 메인 채널에서:
-- `@Andy list all tasks` - 모든 그룹의 작업 보기
-- `@Andy schedule task for "가족 채팅": [프롬프트]` - 다른 그룹의 작업 예약
+- `@Blanc list all tasks` - 모든 그룹의 작업 보기
+- `@Blanc schedule task for "가족 채팅": [프롬프트]` - 다른 그룹의 작업 예약
 
 ---
 
@@ -520,7 +520,7 @@ NanoClaw가 시작되면:
         <key>HOME</key>
         <string>{{HOME}}</string>
         <key>ASSISTANT_NAME</key>
-        <string>Andy</string>
+        <string>Blanc</string>
     </dict>
     <key>StandardOutPath</key>
     <string>{{PROJECT_ROOT}}/logs/nanoclaw.log</string>
@@ -608,7 +608,7 @@ chmod 700 groups/
 | 세션이 계속되지 않음 | 세션 ID가 저장되지 않음 | `data/sessions.json` 확인 |
 | 세션이 계속되지 않음 | 마운트 경로 불일치 | 컨테이너 사용자는 HOME=/home/node인 `node`; 세션은 `/home/node/.claude/`에 있어야 함 |
 | "QR code expired" | WhatsApp 세션 만료 | store/auth/ 삭제 후 재시작 |
-| "No groups registered" | 그룹을 추가하지 않음 | main에서 `@Andy add group "이름"` 사용 |
+| "No groups registered" | 그룹을 추가하지 않음 | main에서 `@Blanc add group "이름"` 사용 |
 
 ### 로그 위치
 

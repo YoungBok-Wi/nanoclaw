@@ -93,19 +93,19 @@ claude
 
 ## 사용법
 
-트리거 단어(기본값: `@Andy`)로 비서와 대화하세요:
+트리거 단어(기본값: `@Blanc`)로 비서와 대화하세요:
 
 ```
-@Andy 매주 평일 아침 9시에 영업 파이프라인 개요를 보내줘 (내 Obsidian vault 폴더에 접근 가능)
-@Andy 매주 금요일에 지난 주 git 히스토리를 검토하고 변경이 있으면 README를 업데이트해줘
-@Andy 매주 월요일 오전 8시에 Hacker News와 TechCrunch에서 AI 개발 뉴스를 모아서 브리핑해줘
+@Blanc 매주 평일 아침 9시에 영업 파이프라인 개요를 보내줘 (내 Obsidian vault 폴더에 접근 가능)
+@Blanc 매주 금요일에 지난 주 git 히스토리를 검토하고 변경이 있으면 README를 업데이트해줘
+@Blanc 매주 월요일 오전 8시에 Hacker News와 TechCrunch에서 AI 개발 뉴스를 모아서 브리핑해줘
 ```
 
 메인 채널(DM 또는 지정된 관리 채널)에서 채널과 작업을 관리할 수 있습니다:
 ```
-@Andy 모든 채널의 예약 작업 목록 보여줘
-@Andy 월요일 브리핑 작업 일시 중지해줘
-@Andy #general 채널에 참여해줘
+@Blanc 모든 채널의 예약 작업 목록 보여줘
+@Blanc 월요일 브리핑 작업 일시 중지해줘
+@Blanc #general 채널에 참여해줘
 ```
 
 ---
@@ -172,7 +172,7 @@ Discord Bot (discord.js) --> SQLite --> 폴링 루프 --> 컨테이너 (Claude A
 1. **Discord 연결**: discord.js 라이브러리가 Discord API에 연결합니다
 2. **메시지 저장**: 받은 메시지가 SQLite 데이터베이스에 저장됩니다
 3. **메시지 확인**: 2초마다 새 메시지가 있는지 확인합니다
-4. **트리거 감지**: `@Andy`로 시작하는 메시지를 찾습니다
+4. **트리거 감지**: `@Blanc`로 시작하는 메시지를 찾습니다
 5. **컨테이너 실행**: 격리된 컨테이너에서 Claude Agent SDK를 실행합니다
 6. **응답 전송**: Claude의 응답을 Discord로 보냅니다
 

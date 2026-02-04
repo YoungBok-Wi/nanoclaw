@@ -160,12 +160,12 @@ If it says "Already authenticated", skip to the next step.
 ## 6. Configure Assistant Name
 
 Ask the user:
-> What trigger word do you want to use? (default: `Andy`)
+> What trigger word do you want to use? (default: `Blanc`)
 >
 > Messages starting with `@TriggerWord` will be sent to Claude.
 
-If they choose something other than `Andy`, update it in these places:
-1. `groups/CLAUDE.md` - Change "# Andy" and "You are Andy" to the new name
+If they choose something other than `Blanc`, update it in these places:
+1. `groups/CLAUDE.md` - Change "# Blanc" and "You are Blanc" to the new name
 2. `groups/main/CLAUDE.md` - Same changes at the top
 3. `data/registered_groups.json` - Use `@NewName` as the trigger when registering groups
 
