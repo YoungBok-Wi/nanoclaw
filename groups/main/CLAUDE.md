@@ -44,6 +44,17 @@ Discord는 전체 마크다운 포맷팅을 지원합니다:
 
 메시지에 Discord 친화적인 포맷팅을 사용하세요.
 
+## 이메일 (Gmail)
+
+Gmail MCP 도구를 통해 이메일 작업이 가능합니다:
+- `mcp__gmail__search_emails` - 쿼리로 이메일 검색
+- `mcp__gmail__get_email` - ID로 전체 이메일 내용 가져오기
+- `mcp__gmail__send_email` - 이메일 보내기
+- `mcp__gmail__draft_email` - 임시 보관함 만들기
+- `mcp__gmail__list_labels` - 사용 가능한 라벨 목록 보기
+
+예시: "오늘 온 안 읽은 이메일 확인해줘" 또는 "john@example.com에게 회의 관련 이메일 보내줘"
+
 ---
 
 ## 관리자 컨텍스트
